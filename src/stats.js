@@ -12,12 +12,13 @@ var Stream = function(id, names, image, stream){
   this.started = false
   try{
     fs.unlinkSync(`${this.path}/${this.id}`)
+    fs.unlinkSync(`${this.path}/${this.id}_stats`)
     log.debug(`previous file ${this.path}/${this.id} for container ${this.name} has been deleted`)
 
   } catch(err) {
     log.debug(`previous file ${this.path}/${this.id} for container ${this.name} was not there... no problem we move on`)
   }
-  
+
   log.debug(`using file ${this.path}/${this.id} for container ${this.name}`)
 
 }
@@ -30,6 +31,9 @@ Stream.prototype.listen  =  function(){
     } else {
       log.debug(`stats obtained from docker ${s.toString()}`)
       let d = JSON.parse(s.toString())
+      fs.appendFile(`${that.path}/${that.id}_stats`, s.toString(), (err) => {
+        if (err) throw err;
+      });
       //log.debug(`storage_stats ${JSON.stringify(d.storage_stats)}`)
       let rx = 0
       let tx = 0
