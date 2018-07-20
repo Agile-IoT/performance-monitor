@@ -15,8 +15,8 @@ let stats = {}
 
 docker.listContainers(function (err, containers) {
   if(err){
-    console.log(err)
-    return []
+    log.error(err)
+    process.exit()
   } else{
     containers.forEach(function (containerInfo) {
       docker.getContainer(containerInfo.Id).stats( function (err, stream){
@@ -58,11 +58,6 @@ process.on('SIGINT', function() {
     let data = util.zipNames(names, arr, 1024*1024)
     return plotter.plot('processor', data, {title:'CPU consumption', xlabel:'seconds', ylabel:'Mtics/sec'})
   }).then(()=>{
-    return Promise.all(mem)
-  }).then((arr)=>{
-    let data = util.zipNames(names, arr, 1024*1024)
-    return plotter.plot('memory', data, {title:'Memory consumption', xlabel:'seconds', ylabel:'MBytes/sec'})
-  }).then(()=>{
     return Promise.all(net_tx)
   }).then((arr)=>{
     let data = util.zipNames(names, arr, 1024*1024)
@@ -72,6 +67,11 @@ process.on('SIGINT', function() {
   }).then((arr)=>{
     let data = util.zipNames(names, arr, 1024*1024)
     return plotter.plot('network_rx', data, {title:'Network use (Rx)', xlabel:'seconds', ylabel:'MBytes'})
+  }).then(()=>{
+    return Promise.all(mem)
+  }).then((arr)=>{
+    let data = util.zipNames(names, arr, 1024*1024)
+    return plotter.plot('memory', data, {title:'Memory consumption', xlabel:'seconds', ylabel:'MBytes/sec'})
   }).catch((err)=>{
     log.error(err)
     return Promise.resolve()

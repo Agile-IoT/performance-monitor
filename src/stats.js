@@ -26,26 +26,37 @@ var Stream = function(id, names, image, stream){
 
 Stream.prototype.listen  =  function(){
   let that = this
+  var chunk = ''
   that.stream.on('data',(s)=>{
     if(!this.started){
       this.started = true
     } else {
       log.debug(`stats obtained from docker ${s.toString()}`)
-      let d = JSON.parse(s.toString())
-      fs.appendFile(`${that.path}/${that.id}_stats`, s.toString(), (err) => {
-        if (err) throw err;
-      });
-      //log.debug(`storage_stats ${JSON.stringify(d.storage_stats)}`)
-      let rx = 0
-      let tx = 0
-      if(d.networks){
-        rx = d.networks.eth0.rx_bytes
-        tx = d.networks.eth0.tx_bytes
+
+      chunk = chunk + s.toString()
+      try{
+        let d = JSON.parse(s.toString())
+        fs.appendFile(`${that.path}/${that.id}_stats`, s.toString(), (err) => {
+          if (err) throw err;
+        });
+        //log.debug(`storage_stats ${JSON.stringify(d.storage_stats)}`)
+        let rx = 0
+        let tx = 0
+        if(d.networks){
+          rx = d.networks.eth0.rx_bytes
+          tx = d.networks.eth0.tx_bytes
+        }
+        let line = `${d.name},${rx},${tx},${d.memory_stats.usage},${d.cpu_stats.cpu_usage.total_usage-d.precpu_stats.cpu_usage.total_usage}\n`
+        fs.appendFile(`${that.path}/${that.id}`, line, (err) => {
+          if (err) throw err;
+        });
+        chunk = ''
+      } catch(err){
+        //maybe next time
+        log.debug(`chunk is not a valid JSON object yet...`)
+        log.debug(`...`)        
       }
-      let line = `${d.name},${rx},${tx},${d.memory_stats.usage},${d.cpu_stats.cpu_usage.total_usage-d.precpu_stats.cpu_usage.total_usage}\n`
-      fs.appendFile(`${that.path}/${that.id}`, line, (err) => {
-        if (err) throw err;
-      });
+
 
     }
 
