@@ -8,18 +8,19 @@ var Stream = function(id, names, image, stream){
   this.image = image
   this.stream = stream
   this.path = os.tmpdir()
+  this.file_base = `${this.path}/perf_${this.name}_${this.id}`
   //used to not have a first cpu high measurement due to lack of previous cpu values
   this.started = false
   try{
-    fs.unlinkSync(`${this.path}/${this.id}`)
-    fs.unlinkSync(`${this.path}/${this.id}_stats`)
-    log.debug(`previous file ${this.path}/${this.id} for container ${this.name} has been deleted`)
+    fs.unlinkSync(`${this.file_base}`)
+    fs.unlinkSync(`${this.file_base}_stats`)
+    log.debug(`previous file ${this.file_base} for container ${this.name} has been deleted`)
 
   } catch(err) {
-    log.debug(`previous file ${this.path}/${this.id} for container ${this.name} was not there... no problem we move on`)
+    log.debug(`previous file ${this.file_base} for container ${this.name} was not there... no problem we move on`)
   }
 
-  log.debug(`using file ${this.path}/${this.id} for container ${this.name}`)
+  log.debug(`using file ${this.file_base} for container ${this.name}`)
 
 }
 

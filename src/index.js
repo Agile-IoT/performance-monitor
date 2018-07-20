@@ -14,15 +14,21 @@ log.level = conf.log_level
 let stats = {}
 
 docker.listContainers(function (err, containers) {
-  containers.forEach(function (containerInfo) {
-    docker.getContainer(containerInfo.Id).stats( function (err, stream){
-      if(filter.containerNameOk(containerInfo.Names[0])){
-        log.info(`container allowed by filter ${containerInfo.Names[0]}`)
-        stats[containerInfo.Id] = new Stats(containerInfo.Id,  containerInfo.Names, containerInfo.Image, stream)
-        stats[containerInfo.Id].listen()
-      }
-    })
-  });
+  if(err){
+    console.log(err)
+    return []
+  } else{
+    containers.forEach(function (containerInfo) {
+      docker.getContainer(containerInfo.Id).stats( function (err, stream){
+        if(filter.containerNameOk(containerInfo.Names[0])){
+          log.info(`container allowed by filter ${containerInfo.Names[0]}`)
+          stats[containerInfo.Id] = new Stats(containerInfo.Id,  containerInfo.Names, containerInfo.Image, stream)
+          stats[containerInfo.Id].listen()
+        }
+      })
+    });
+  }
+
 })
 
 process.on('SIGINT', function() {

@@ -1,9 +1,15 @@
 var plot = require('plotter').plot
 var log = require('winston')
+var fs = require('fs');
 
 var Plot = function(plotConf){
   //this.path = plotConf.path
+
   Object.assign(this,plotConf)
+  if (!fs.existsSync(this.path)) {
+      throw Error(`folder path for plotting does not exist!: ${this.path}`)
+  }
+
 }
 
 Plot.prototype.plot = function(what, data, meta){
