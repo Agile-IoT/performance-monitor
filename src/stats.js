@@ -36,7 +36,7 @@ Stream.prototype.listen  =  function(){
       chunk = chunk + s.toString()
       try{
         let d = JSON.parse(s.toString())
-        fs.appendFile(`${that.path}/${that.id}_stats`, s.toString(), (err) => {
+        fs.appendFile(`${this.file_base}_stats`, s.toString(), (err) => {
           if (err) throw err;
         });
         //log.debug(`storage_stats ${JSON.stringify(d.storage_stats)}`)
@@ -47,7 +47,7 @@ Stream.prototype.listen  =  function(){
           tx = d.networks.eth0.tx_bytes
         }
         let line = `${d.name},${rx},${tx},${d.memory_stats.usage},${d.cpu_stats.cpu_usage.total_usage-d.precpu_stats.cpu_usage.total_usage}\n`
-        fs.appendFile(`${that.path}/${that.id}`, line, (err) => {
+        fs.appendFile(`${this.file_base}`, line, (err) => {
           if (err) throw err;
         });
         chunk = ''
