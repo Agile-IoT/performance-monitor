@@ -8,7 +8,7 @@ var Stream = function(id, names, image, stream){
   this.image = image
   this.stream = stream
   this.path = os.tmpdir()
-  this.file_base = `${this.path}/perf_${this.name}_${this.id}`
+  this.file_base = `${this.path}/perf_${this.name.substring(1)}_${this.id}`
   //used to not have a first cpu high measurement due to lack of previous cpu values
   this.started = false
   try{
@@ -54,7 +54,7 @@ Stream.prototype.listen  =  function(){
       } catch(err){
         //maybe next time
         log.debug(`chunk is not a valid JSON object yet...`)
-        log.debug(`...`)        
+        log.debug(`...`)
       }
 
 
