@@ -88,7 +88,7 @@ Stream.prototype.getColumnFromTemp = function(i){
   let that = this
   return new Promise((resolve, reject) => {
     //to save memory this could be done line by line if plotting acts out...
-    fs.readFile(`${that.path}/${that.id}`, (err, data) =>{
+    fs.readFile(`${that.file_base}`, (err, data) =>{
       if(err){
         log.error(`error while reading temporary file for id ${that.id} ${err}`)
         resolve([])
