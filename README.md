@@ -1,7 +1,7 @@
 # AGILE Performance Monitor
 
 
-This component monitors CPU, Netowrk and Processor usage from a set of containers throught the docker API. 
+This component monitors CPU, Netowrk and Processor usage from a set of containers throught the docker API.
 
 Then it plots the consumption graphs over time using a wrapper of GNUPlot
 
@@ -58,7 +58,28 @@ docker:{
     port: 2376,
     version: 'v1.22'
 }
- 
+
 ```
 
 
+
+## Issue with Memory accounting on the Pi
+
+Some Linux distros do not enable the memory cgroup, which is used by docker to do the accounting of RAM used by each container. This is a known issue when monitoring memory in some distributions:
+
+* http://awhitehatter.me/debian-jessie-wdocker/
+
+* https://stackoverflow.com/questions/45541242/docker-stats-shows-zero-memory-usage-even-for-running-containers
+
+* https://docs.docker.com/install/linux/linux-postinstall/
+
+Instructions for Debian and Ubuntu require changes for the GRUB loader. However Raspbian does not use GRUB. Luckily, someone already described how to solve this here:
+
+https://www.raspberrypi.org/forums/viewtopic.php?t=203128
+
+
+Specifically, what you need to do is to add  cgroup_enable=memory cgroup_memory=1 to the line in /boot/cmdline.txt. These two should go before elevator=deadline. For example, this is the line you need in your cmdline.txt for raspbian Raspbian GNU/Linux 9.1 (stretch) -according to lsb_release.
+
+```
+dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=PARTUUID=df78edfd-02 rootfstype=ext4 cgroup_enable=memory cgroup_memory=1 elevator=deadline fsck.repair=yes rootwait
+```
