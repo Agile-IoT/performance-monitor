@@ -71,7 +71,7 @@ process.on('SIGINT', function() {
     return Promise.all(mem)
   }).then((arr)=>{
     let data = util.zipNames(names, arr, 1024*1024)
-    return plotter.plot('memory', data, {title:'Memory consumption', xlabel:'seconds', ylabel:'MBytes/sec'})
+    return plotter.plot('memory', data, {title:'Memory consumption', xlabel:'seconds', ylabel:'MBytes'})
   }).catch((err)=>{
     log.error(err)
     return Promise.resolve()
